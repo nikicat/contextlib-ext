@@ -1,0 +1,31 @@
+---
+{
+   "kind": "pipeline",
+   "name": "py37",
+   "steps": [
+      {
+         "commands": [
+            "pip install tox",
+            "tox -e py37"
+         ],
+         "image": "python:3.7",
+         "name": "test"
+      }
+   ]
+}
+---
+{
+   "kind": "pipeline",
+   "name": "py38",
+   "steps": [
+      {
+         "commands": [
+            "pip install tox",
+            "tox -e py38"
+         ],
+         "image": "python:3.8",
+         "name": "test"
+      }
+   ]
+}
+...

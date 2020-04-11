@@ -1,6 +1,6 @@
 import pytest
 
-from contextlib_ext import suppress, async_suppress
+from contextlib_ext import suppress, async_suppress, asynccontextmanager
 
 
 class SuppressedException(Exception):
@@ -71,3 +71,60 @@ async def test_async_suppress_decorator_raising():
         await raising()
     with pytest.raises(PassedException):
         await raising()
+
+
+@pytest.fixture
+def testmanager():
+    @asynccontextmanager
+    async def _testmanager(l):
+        l[0] = 'entered'
+        try:
+            yield
+        except Exception:
+            l[0] = 'excepted'
+            raise
+        else:
+            l[0] = 'exited'
+    return _testmanager
+
+
+async def test_asynccontextmanager(testmanager):
+    var = ['']
+    manager = testmanager(var)
+    assert var[0] == ''
+    async with manager:
+        assert var[0] == 'entered'
+    assert var[0] == 'exited'
+
+
+async def test_asynccontextmanager_exception(testmanager):
+    var = ['']
+    manager = testmanager(var)
+    assert var[0] == ''
+    with pytest.raises(ValueError):
+        async with manager:
+            assert var[0] == 'entered'
+            raise ValueError
+    assert var[0] == 'excepted'
+
+
+async def test_asynccontextmanager_as_decorator(testmanager):
+    var = ['']
+    @testmanager(var)
+    async def func():
+        assert var[0] == 'entered'
+    assert var[0] == ''
+    await func()
+    assert var[0] == 'exited'
+
+
+async def test_asynccontextmanager_as_decorator_exception(testmanager):
+    var = ['']
+    @testmanager(var)
+    async def func():
+        assert var[0] == 'entered'
+        raise ValueError
+    assert var[0] == ''
+    with pytest.raises(ValueError):
+        await func()
+    assert var[0] == 'excepted'
