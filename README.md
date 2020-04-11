@@ -4,7 +4,7 @@
 
 `contextlib-ext` is a complimentary library for `contextlib`, it provides a following helpers:
 
-## `suppress` as a decorator
+## `@suppress` decorator
 `suppress` can be used as a decorator
 
 ```python
@@ -18,7 +18,7 @@ phony_func()
 print("No exceptions")
 ```
 
-## `@asynccontextmanager` creates decorator
+## `@asynccontextmanager` to create decorators
 `@asynccontextmanager` creates context manager that can be used as a decorator (`contextlib.contextmanager` already supports it)
 
 ```python
@@ -38,8 +38,8 @@ async def myfunc():
     pass
 ```
 
-## `async_suppress`
-`async_suppress` - the same as `suppress`, but async
+## `@async_suppress`
+`async_suppress` - the same as `suppress`, but works as a decorator for async functions
 
 ```python
 from contextlib_ext import async_suppress
